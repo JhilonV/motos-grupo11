@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSignOutAlt, FaSave, FaTrash, FaSearch, FaMotorcycle, FaEdit } from 'react-icons/fa';
+import { FaArrowLeft, FaSignOutAlt, FaSave, FaTrash, FaSearch, FaMotorcycle } from 'react-icons/fa';
 
 function Buscar() {
-  const [dni, setDni] = useState('');
   const [resultados, setResultados] = useState([]);
   const [sistema] = useState(localStorage.getItem('sistema'));
   const [error, setError] = useState('');
@@ -32,7 +31,7 @@ function Buscar() {
       }
       setDescCargada(true);
     }
-  }, [resultados, sistema, descCargada]);
+  }, [resultados, sistema, descCargada, API_URL]);
 
   const handleBuscar = async (e) => {
     e.preventDefault();
@@ -78,12 +77,12 @@ function Buscar() {
   };
 
   const handleGuardarDesc = async () => {
-    await axios.post(`${API_URL}/descripcion/${sistema}/${dni}`, { descripcion });
+    await axios.post(`${API_URL}/descripcion/${sistema}/${resultados[0]?.DNI}`, { descripcion });
     alert('Descripción guardada');
   };
 
   const handleBorrarDesc = async () => {
-    await axios.delete(`${API_URL}/descripcion/${sistema}/${dni}`);
+    await axios.delete(`${API_URL}/descripcion/${sistema}/${resultados[0]?.DNI}`);
     setDescripcion('');
     alert('Descripción borrada');
   };
@@ -112,20 +111,14 @@ function Buscar() {
       </form>
       {error && <div className="error">{error}</div>}
       {resultados.length > 0 && (
-        <div className="card" style={{ marginTop: 16 }}>
-          <h3>Datos encontrados <FaMotorcycle color="#00bfff" /></h3>
-          <table className="table" style={{ borderRadius: 12, overflow: 'hidden', boxShadow: '0 2px 8px 0 rgba(0,0,0,0.08)' }}>
-            <thead style={{ background: '#e3f2fd' }}>
+        <div style={{ width: '100%' }}>
+          <table className="table">
+            <thead>
               <tr>
-                {Object.keys(resultados[0]).map((key) => (
-                  <th key={key} style={{ textAlign: 'center', fontSize: '1.1em', background: '#e3f2fd', color: '#00bfff', borderRadius: 8 }}>
-                    {key === 'DNI' || key.toLowerCase().includes('dni') ? '🆔 ' : ''}
-                    {key === 'PLACA' || key.toLowerCase().includes('placa') ? '🏍️ ' : ''}
-                    {key === 'TELEFONO' ? '📱 ' : ''}
-                    {key}
-                  </th>
+                {Object.keys(resultados[0]).map((key, i) => (
+                  <th key={i}>{key}</th>
                 ))}
-                <th>Acción</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -150,23 +143,21 @@ function Buscar() {
               ))}
             </tbody>
           </table>
-          <div style={{ marginTop: 24 }}>
-            <label style={{ fontWeight: 'bold', color: '#00bfff' }}>Descripción:</label><br/>
-            <textarea
-              value={descripcion}
-              onChange={e => setDescripcion(e.target.value)}
-              rows={3}
-              style={{ width: '100%', borderRadius: 12, padding: 10, fontSize: '1em', marginTop: 8 }}
-              placeholder="Agrega una descripción didáctica..."
-            />
-            <div style={{ marginTop: 12, display: 'flex', gap: 12 }}>
-              <button onClick={handleGuardarDesc} style={{ background: '#4caf50', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
-                <FaSave /> Guardar
-              </button>
-              <button onClick={handleBorrarDesc} style={{ background: '#e53935', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
-                <FaTrash /> Borrar
-              </button>
-            </div>
+          <label style={{ fontWeight: 'bold', color: '#00bfff' }}>Descripción:</label><br />
+          <textarea
+            value={descripcion}
+            onChange={e => setDescripcion(e.target.value)}
+            rows={3}
+            style={{ width: '100%', borderRadius: 12, padding: 10, fontSize: '1em', marginTop: 8 }}
+            placeholder="Agrega una descripción didáctica..."
+          />
+          <div style={{ marginTop: 12, display: 'flex', gap: 12 }}>
+            <button onClick={handleGuardarDesc} style={{ background: '#4caf50', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
+              <FaSave /> Guardar
+            </button>
+            <button onClick={handleBorrarDesc} style={{ background: '#e53935', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
+              <FaTrash /> Borrar
+            </button>
           </div>
         </div>
       )}
