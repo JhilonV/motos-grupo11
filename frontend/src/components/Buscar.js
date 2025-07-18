@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSignOutAlt, FaSave, FaTrash, FaSearch, FaMotorcycle } from 'react-icons/fa';
+import { FaArrowLeft, FaSignOutAlt, FaSave, FaTrash, FaSearch } from 'react-icons/fa';
 
 function Buscar() {
   const [resultados, setResultados] = useState([]);
@@ -165,4 +165,4 @@ function Buscar() {
   );
 }
 
-export default Buscar; 
+export default Buscar;
