@@ -88,7 +88,9 @@ app.get('/data/:sistema/buscar/:texto', (req, res) => {
     const resultados = registros.filter(reg =>
       Object.values(reg).some(val =>
         val && val.toString().toLowerCase().includes(texto)
-      )
+      ) || 
+      // Búsqueda específica por DNI (Column9)
+      (reg.Column9 && reg.Column9.toString() === texto)
     );
     res.json(resultados);
   });
