@@ -1,10 +1,16 @@
 {
+  "name": "motos-grupo11",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de motos",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "axios": "^1.10.0",
     "cors": "^2.8.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^5.5.0",
-    "react-router-dom": "^6.22.3"
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
