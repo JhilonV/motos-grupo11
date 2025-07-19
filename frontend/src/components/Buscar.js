@@ -111,31 +111,94 @@ function Buscar() {
       </form>
       {error && <div className="error">{error}</div>}
       {resultados.length > 0 && (
-        <div style={{ width: '100%' }}>
-          <table className="table">
+        <div style={{ 
+          width: '100%', 
+          display: 'flex', 
+          justifyContent: 'center',
+          overflowX: 'auto'
+        }}>
+          <table className="table" style={{
+            minWidth: '95%',
+            maxWidth: '1200px',
+            borderCollapse: 'collapse',
+            margin: '0 auto',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+            borderRadius: '8px',
+            overflow: 'hidden'
+          }}>
             <thead>
-              <tr>
+              <tr style={{ backgroundColor: '#00bfff', color: 'white' }}>
                 {Object.keys(resultados[0]).map((key, i) => (
-                  <th key={i}>{key}</th>
+                  <th key={i} style={{ 
+                    padding: '12px 8px', 
+                    textAlign: 'center',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    border: '1px solid #0099cc',
+                    minWidth: '120px'
+                  }}>{key}</th>
                 ))}
-                <th>Acciones</th>
+                <th style={{ 
+                  padding: '12px 8px', 
+                  textAlign: 'center',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  border: '1px solid #0099cc',
+                  minWidth: '100px'
+                }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {resultados.map((row, idx) => (
-                <tr key={idx} style={{ background: idx % 2 === 0 ? '#f5faff' : '#fff' }}>
+                <tr key={idx} style={{ 
+                  background: idx % 2 === 0 ? '#f8f9fa' : '#ffffff',
+                  borderBottom: '1px solid #dee2e6'
+                }}>
                   {Object.entries(row).map(([key, val], i) => (
-                    <td key={i} style={{ textAlign: 'center', fontWeight: key === 'DNI' ? 'bold' : 'normal', color: key === 'DNI' ? '#ffb300' : undefined, fontSize: key === 'DNI' ? '1.1em' : undefined }}>
+                    <td key={i} style={{ 
+                      textAlign: 'center', 
+                      fontWeight: key === 'DNI' ? 'bold' : 'normal', 
+                      color: key === 'DNI' ? '#ffb300' : undefined, 
+                      fontSize: key === 'DNI' ? '1.1em' : '14px',
+                      padding: '8px 4px',
+                      border: '1px solid #dee2e6',
+                      verticalAlign: 'middle'
+                    }}>
                       <input
                         type="text"
                         value={editando[idx]?.[key] !== undefined ? editando[idx][key] : val || ''}
                         onChange={e => handleEdit(idx, key, e.target.value)}
-                        style={{ width: '90%', border: '1px solid #ccc', borderRadius: 6, padding: 4, background: 'transparent', textAlign: 'center' }}
+                        style={{ 
+                          width: '95%', 
+                          border: '1px solid #ccc', 
+                          borderRadius: '4px', 
+                          padding: '6px 8px', 
+                          background: 'transparent', 
+                          textAlign: 'center',
+                          fontSize: '13px',
+                          minHeight: '32px'
+                        }}
                       />
                     </td>
                   ))}
-                  <td>
-                    <button onClick={() => handleGuardarEdit(row, idx)} style={{ background: '#4caf50', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} title="Guardar cambios">
+                  <td style={{ 
+                    textAlign: 'center',
+                    padding: '8px 4px',
+                    border: '1px solid #dee2e6',
+                    verticalAlign: 'middle'
+                  }}>
+                    <button onClick={() => handleGuardarEdit(row, idx)} style={{ 
+                      background: '#4caf50', 
+                      color: '#fff', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 6,
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '12px'
+                    }} title="Guardar cambios">
                       <FaSave /> Guardar
                     </button>
                   </td>
@@ -143,21 +206,23 @@ function Buscar() {
               ))}
             </tbody>
           </table>
-          <label style={{ fontWeight: 'bold', color: '#00bfff' }}>Descripción:</label><br />
-          <textarea
-            value={descripcion}
-            onChange={e => setDescripcion(e.target.value)}
-            rows={3}
-            style={{ width: '100%', borderRadius: 12, padding: 10, fontSize: '1em', marginTop: 8 }}
-            placeholder="Agrega una descripción didáctica..."
-          />
-          <div style={{ marginTop: 12, display: 'flex', gap: 12 }}>
-            <button onClick={handleGuardarDesc} style={{ background: '#4caf50', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
-              <FaSave /> Guardar
-            </button>
-            <button onClick={handleBorrarDesc} style={{ background: '#e53935', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
-              <FaTrash /> Borrar
-            </button>
+          <div style={{ marginTop: 20 }}>
+            <label style={{ fontWeight: 'bold', color: '#00bfff' }}>Descripción:</label><br />
+            <textarea
+              value={descripcion}
+              onChange={e => setDescripcion(e.target.value)}
+              rows={3}
+              style={{ width: '100%', borderRadius: 12, padding: 10, fontSize: '1em', marginTop: 8 }}
+              placeholder="Agrega una descripción didáctica..."
+            />
+            <div style={{ marginTop: 12, display: 'flex', gap: 12 }}>
+              <button onClick={handleGuardarDesc} style={{ background: '#4caf50', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
+                <FaSave /> Guardar
+              </button>
+              <button onClick={handleBorrarDesc} style={{ background: '#e53935', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
+                <FaTrash /> Borrar
+              </button>
+            </div>
           </div>
         </div>
       )}
