@@ -18,20 +18,29 @@ function Buscar() {
     setDescCargada(false);
   }, [busqueda, sistema]);
 
-  useEffect(() => {
-    if (resultados.length > 0 && !descCargada) {
-      // Buscar descripción solo si el primer resultado tiene DNI válido
-      const dni = resultados[0].DNI;
-      if (dni) {
-        axios.get(`${API_URL}/descripcion/${sistema}/${dni}`)
-          .then(res => setDescripcion(res.data.descripcion || ''))
-          .catch(() => setDescripcion(''));
-      } else {
+  // Función para cargar descripción
+  const cargarDescripcion = async (dni) => {
+    if (dni) {
+      try {
+        const res = await axios.get(`${API_URL}/descripcion/${sistema}/${dni}`);
+        setDescripcion(res.data.descripcion || '');
+      } catch (err) {
         setDescripcion('');
       }
-      setDescCargada(true);
+    } else {
+      setDescripcion('');
     }
-  }, [resultados, sistema, descCargada, API_URL]);
+  };
+
+  useEffect(() => {
+    if (resultados.length > 0) {
+      // Cargar descripción del primer resultado
+      const dni = resultados[0].DNI;
+      cargarDescripcion(dni);
+    } else {
+      setDescripcion('');
+    }
+  }, [resultados, sistema, API_URL]);
 
   const handleBuscar = async (e) => {
     e.preventDefault();
@@ -77,14 +86,37 @@ function Buscar() {
   };
 
   const handleGuardarDesc = async () => {
-    await axios.post(`${API_URL}/descripcion/${sistema}/${resultados[0]?.DNI}`, { descripcion });
-    alert('Descripción guardada');
+    if (!resultados[0]?.DNI) {
+      alert('No hay cliente seleccionado para guardar descripción.');
+      return;
+    }
+    
+    try {
+      await axios.post(`${API_URL}/descripcion/${sistema}/${resultados[0].DNI}`, { descripcion });
+      alert('✅ Descripción guardada exitosamente');
+    } catch (err) {
+      alert('❌ Error al guardar la descripción');
+    }
   };
 
   const handleBorrarDesc = async () => {
-    await axios.delete(`${API_URL}/descripcion/${sistema}/${resultados[0]?.DNI}`);
-    setDescripcion('');
-    alert('Descripción borrada');
+    if (!resultados[0]?.DNI) {
+      alert('No hay cliente seleccionado para borrar descripción.');
+      return;
+    }
+    
+    if (!descripcion.trim()) {
+      alert('No hay descripción para borrar.');
+      return;
+    }
+    
+    try {
+      await axios.delete(`${API_URL}/descripcion/${sistema}/${resultados[0].DNI}`);
+      setDescripcion('');
+      alert('✅ Descripción borrada exitosamente');
+    } catch (err) {
+      alert('❌ Error al borrar la descripción');
+    }
   };
 
   const handleLogout = () => {
@@ -207,7 +239,20 @@ function Buscar() {
             </tbody>
           </table>
           <div style={{ marginTop: 20 }}>
-            <label style={{ fontWeight: 'bold', color: '#00bfff' }}>Descripción:</label><br />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <label style={{ fontWeight: 'bold', color: '#00bfff' }}>Descripción:</label>
+              {resultados[0]?.DNI && (
+                <span style={{ 
+                  fontSize: '12px', 
+                  color: '#666', 
+                  backgroundColor: '#f0f0f0', 
+                  padding: '2px 8px', 
+                  borderRadius: '12px' 
+                }}>
+                  Cliente: {resultados[0].DNI}
+                </span>
+              )}
+            </div>
             <textarea
               value={descripcion}
               onChange={e => setDescripcion(e.target.value)}
@@ -215,13 +260,18 @@ function Buscar() {
               style={{ width: '100%', borderRadius: 12, padding: 10, fontSize: '1em', marginTop: 8 }}
               placeholder="Agrega una descripción didáctica..."
             />
-            <div style={{ marginTop: 12, display: 'flex', gap: 12 }}>
+            <div style={{ marginTop: 12, display: 'flex', gap: 12, alignItems: 'center' }}>
               <button onClick={handleGuardarDesc} style={{ background: '#4caf50', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
                 <FaSave /> Guardar
               </button>
               <button onClick={handleBorrarDesc} style={{ background: '#e53935', color: '#fff', display: 'flex', alignItems: 'center', gap: 6 }} type="button">
                 <FaTrash /> Borrar
               </button>
+              {descripcion && (
+                <span style={{ fontSize: '12px', color: '#4caf50' }}>
+                  💾 Descripción lista para guardar
+                </span>
+              )}
             </div>
           </div>
         </div>
