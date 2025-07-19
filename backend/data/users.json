@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "admin123",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "isDefault": true
+    },
+    {
+      "username": "grupo11",
+      "password": "motos2024",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "isDefault": true
+    },
+    {
+      "username": "usuario",
+      "password": "123456",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "isDefault": true
+    }
+  ]
+} 

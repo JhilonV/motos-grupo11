@@ -1,20 +1,37 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSignInAlt } from 'react-icons/fa';
+import axios from 'axios';
 
 function Login({ onLogin }) {
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulación de login exitoso
-    if (user && pass) {
-      onLogin();
-      navigate('/select-system');
-    } else {
-      alert('Por favor, ingresa usuario y contraseña.');
+    
+    try {
+      // Llamar al backend para verificar login
+      const API_URL = 'https://motos-grupo11-backend-erhnahesh7hrcdc4.canadacentral-01.azurewebsites.net';
+      const response = await axios.post(`${API_URL}/users/login`, {
+        username: user,
+        password: pass
+      });
+      
+      if (response.data.success) {
+        localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('currentUser', user);
+        onLogin();
+        navigate('/select-system');
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        alert('Usuario o contraseña incorrectos. Intenta de nuevo.');
+      } else {
+        alert('Error al iniciar sesión. Intenta de nuevo.');
+      }
+      setPass(''); // Limpiar contraseña
     }
   };
 
