@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaSignOutAlt, FaSave, FaTrash, FaSearch } from 'react-icons/fa';
+import { FaArrowLeft, FaSignOutAlt, FaSave, FaTrash, FaSearch, FaPlus } from 'react-icons/fa';
 
 function Buscar() {
   const [resultados, setResultados] = useState([]);
@@ -11,6 +11,9 @@ function Buscar() {
   const [descCargada, setDescCargada] = useState(false);
   const [busqueda, setBusqueda] = useState('');
   const [editando, setEditando] = useState({}); // {rowIdx: {campo: valor}}
+  const [showAddField, setShowAddField] = useState(false);
+  const [newFieldName, setNewFieldName] = useState('');
+  const [newFieldValue, setNewFieldValue] = useState('');
   const navigate = useNavigate();
   const API_URL = 'https://motos-grupo11-backend-erhnahesh7hrcdc4.canadacentral-01.azurewebsites.net';
 
@@ -119,6 +122,39 @@ function Buscar() {
     }
   };
 
+  const handleAddField = async () => {
+    if (!newFieldName.trim()) {
+      alert('Por favor, ingresa el nombre del campo.');
+      return;
+    }
+    
+    try {
+      const response = await axios.post(`${API_URL}/data/${sistema}/add-field`, {
+        fieldName: newFieldName.trim(),
+        defaultValue: newFieldValue.trim()
+      });
+      
+      if (response.data.success) {
+        alert(`✅ ${response.data.message}`);
+        setNewFieldName('');
+        setNewFieldValue('');
+        setShowAddField(false);
+        
+        // Refrescar resultados para mostrar el nuevo campo
+        if (busqueda) {
+          const res = await axios.get(`${API_URL}/data/${sistema}/buscar/${encodeURIComponent(busqueda)}`);
+          setResultados(res.data);
+        }
+      }
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.error) {
+        alert(`❌ ${err.response.data.error}`);
+      } else {
+        alert('❌ Error al agregar el campo');
+      }
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('sistema');
     localStorage.removeItem('isAuthenticated');
@@ -141,6 +177,91 @@ function Buscar() {
           <FaSearch /> Buscar
         </button>
       </form>
+      
+      {/* Botón para agregar campo */}
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
+        <button 
+          onClick={() => setShowAddField(!showAddField)}
+          style={{ 
+            background: '#ffb300', 
+            color: '#23272f', 
+            border: 'none', 
+            padding: '8px 16px', 
+            borderRadius: '6px', 
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            fontWeight: 'bold'
+          }}
+        >
+          <FaPlus /> Agregar Campo
+        </button>
+      </div>
+      
+      {/* Formulario para agregar campo */}
+      {showAddField && (
+        <div style={{ 
+          background: '#f8f9fa', 
+          padding: '16px', 
+          borderRadius: '8px', 
+          marginBottom: '16px',
+          border: '1px solid #dee2e6'
+        }}>
+          <h4 style={{ margin: '0 0 12px 0', color: '#00bfff' }}>Agregar Nuevo Campo</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+            <input
+              type="text"
+              placeholder="Nombre del campo (ej: Color de polo)"
+              value={newFieldName}
+              onChange={e => setNewFieldName(e.target.value)}
+              style={{ width: '280px', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            />
+            <input
+              type="text"
+              placeholder="Valor por defecto (opcional)"
+              value={newFieldValue}
+              onChange={e => setNewFieldValue(e.target.value)}
+              style={{ width: '280px', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+            />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={handleAddField}
+                style={{ 
+                  background: '#4caf50', 
+                  color: '#fff', 
+                  border: 'none', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6
+                }}
+              >
+                <FaPlus /> Agregar
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddField(false);
+                  setNewFieldName('');
+                  setNewFieldValue('');
+                }}
+                style={{ 
+                  background: '#6c757d', 
+                  color: '#fff', 
+                  border: 'none', 
+                  padding: '8px 16px', 
+                  borderRadius: '4px', 
+                  cursor: 'pointer'
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {error && <div className="error">{error}</div>}
       {resultados.length > 0 && (
         <div style={{ 

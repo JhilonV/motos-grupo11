@@ -355,6 +355,84 @@ app.get('/users', (req, res) => {
   }
 });
 
+// Dynamic fields management
+app.post('/data/:sistema/add-field', (req, res) => {
+  const sistema = req.params.sistema;
+  const { fieldName, defaultValue = '' } = req.body;
+  
+  if (!fieldName || fieldName.trim() === '') {
+    return res.status(400).json({ error: 'El nombre del campo es requerido' });
+  }
+  
+  let filePath;
+  if (sistema === 'giankar') {
+    filePath = path.join(__dirname, 'backend/data/giankar.json');
+  } else if (sistema === 'peru_bcgl') {
+    filePath = path.join(__dirname, 'backend/data/peru_bcgl.json');
+  } else {
+    return res.status(400).json({ error: 'Sistema no válido' });
+  }
+  
+  try {
+    // Leer datos existentes
+    const data = fs.readFileSync(filePath, 'utf8');
+    const json = JSON.parse(data);
+    const registros = Array.isArray(json) ? json : json.Hoja1 || [];
+    
+    // Agregar el nuevo campo a todos los registros
+    registros.forEach(registro => {
+      registro[fieldName] = defaultValue;
+    });
+    
+    // Guardar archivo actualizado
+    const dataToSave = Array.isArray(json) ? registros : { ...json, Hoja1: registros };
+    fs.writeFileSync(filePath, JSON.stringify(dataToSave, null, 2), 'utf8');
+    
+    res.json({ 
+      success: true, 
+      message: `Campo "${fieldName}" agregado exitosamente a todos los registros`,
+      fieldName: fieldName
+    });
+  } catch (err) {
+    console.error('Error adding field:', err);
+    res.status(500).json({ error: 'Error al agregar el campo' });
+  }
+});
+
+app.get('/data/:sistema/fields', (req, res) => {
+  const sistema = req.params.sistema;
+  let filePath;
+  
+  if (sistema === 'giankar') {
+    filePath = path.join(__dirname, 'backend/data/giankar.json');
+  } else if (sistema === 'peru_bcgl') {
+    filePath = path.join(__dirname, 'backend/data/peru_bcgl.json');
+  } else {
+    return res.status(400).json({ error: 'Sistema no válido' });
+  }
+  
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    const json = JSON.parse(data);
+    const registros = Array.isArray(json) ? json : json.Hoja1 || [];
+    
+    if (registros.length > 0) {
+      // Obtener todos los campos únicos de todos los registros
+      const allFields = new Set();
+      registros.forEach(registro => {
+        Object.keys(registro).forEach(key => allFields.add(key));
+      });
+      
+      res.json({ fields: Array.from(allFields) });
+    } else {
+      res.json({ fields: [] });
+    }
+  } catch (err) {
+    console.error('Error reading fields:', err);
+    res.status(500).json({ error: 'Error al leer campos' });
+  }
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
