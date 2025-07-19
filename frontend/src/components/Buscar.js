@@ -12,7 +12,7 @@ function Buscar() {
   const [busqueda, setBusqueda] = useState('');
   const [editando, setEditando] = useState({}); // {rowIdx: {campo: valor}}
   const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
+  const API_URL = 'https://motos-grupo11-backend-erhnahesh7hrcdc4.canadacentral-01.azurewebsites.net';
 
   useEffect(() => {
     setDescCargada(false);
