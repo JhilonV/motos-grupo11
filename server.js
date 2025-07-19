@@ -64,6 +64,20 @@ app.get('/data/:sistema/dni/:dni', (req, res) => {
   });
 });
 
+// Mapeo de columnas genéricas a nombres amigables
+const columnMap = {
+  Column1: 'ITEM',
+  Column2: 'FLOTA',
+  Column3: 'PLACA',
+  Column4: 'MODELO',
+  Column5: 'MARCA',
+  Column6: 'COLOR',
+  'CHARLAS CARNET VIAL': 'NOMBRES Y APELLIDOS DE CONDUCTORES',
+  Column9: 'DNI',
+  Column10: 'LIC.COND.',
+  TELEFONO: 'TELEFONO'
+};
+
 // Search by any field
 app.get('/data/:sistema/buscar/:texto', (req, res) => {
   const sistema = req.params.sistema;
@@ -91,7 +105,18 @@ app.get('/data/:sistema/buscar/:texto', (req, res) => {
       ) || 
       // Búsqueda específica por DNI (Column9)
       (reg.Column9 && reg.Column9.toString() === texto)
-    );
+    ).map(reg => {
+      // Renombrar las claves y asegurar todos los campos
+      const nuevo = {};
+      Object.entries(reg).forEach(([k, v]) => {
+        nuevo[columnMap[k] || k] = v;
+      });
+      // Asegurar todos los campos importantes
+      if (!nuevo['DNI'] && reg['Column9']) nuevo['DNI'] = reg['Column9'];
+      if (!nuevo['LIC.COND.'] && reg['Column10']) nuevo['LIC.COND.'] = reg['Column10'];
+      if (!nuevo['TELEFONO']) nuevo['TELEFONO'] = '';
+      return nuevo;
+    });
     res.json(resultados);
   });
 });
