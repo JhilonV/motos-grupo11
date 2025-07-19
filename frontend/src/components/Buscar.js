@@ -5,7 +5,7 @@ import { FaArrowLeft, FaSignOutAlt, FaSave, FaTrash, FaSearch, FaPlus } from 're
 
 function Buscar() {
   const [resultados, setResultados] = useState([]);
-  const [sistema] = useState(localStorage.getItem('sistema'));
+  const [sistema] = useState((localStorage.getItem('sistema') || '').toLowerCase().trim());
   const [error, setError] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [busqueda, setBusqueda] = useState('');
