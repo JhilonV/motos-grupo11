@@ -16,8 +16,8 @@ router.get('/ping', function(req, res, next) {
 router.get('/data/:sistema', function(req, res) {
   const sistema = req.params.sistema;
   let filePath;
-  if (sistema === 'giankar') filePath = path.join(__dirname, '../data/giankar.json');
-  else if (sistema === 'peru_bcgl') filePath = path.join(__dirname, '../data/peru_bcgl.json');
+  if (sistema === 'giankar') filePath = path.join(__dirname, 'data/giankar.json');
+  else if (sistema === 'peru_bcgl') filePath = path.join(__dirname, 'data/peru_bcgl.json');
   else return res.status(400).json({ error: 'Sistema no válido' });
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -31,8 +31,8 @@ router.get('/data/:sistema/dni/:dni', function(req, res) {
   const sistema = req.params.sistema;
   const dni = req.params.dni;
   let filePath;
-  if (sistema === 'giankar') filePath = path.join(__dirname, '../data/giankar.json');
-  else if (sistema === 'peru_bcgl') filePath = path.join(__dirname, '../data/peru_bcgl.json');
+  if (sistema === 'giankar') filePath = path.join(__dirname, 'data/giankar.json');
+  else if (sistema === 'peru_bcgl') filePath = path.join(__dirname, 'data/peru_bcgl.json');
   else return res.status(400).json({ error: 'Sistema no válido' });
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -64,8 +64,8 @@ router.get('/data/:sistema/buscar/:texto', function(req, res) {
   const sistema = req.params.sistema;
   const texto = req.params.texto.toLowerCase();
   let filePath;
-  if (sistema === 'giankar') filePath = path.join(__dirname, '../data/giankar.json');
-  else if (sistema === 'peru_bcgl') filePath = path.join(__dirname, '../data/peru_bcgl.json');
+  if (sistema === 'giankar') filePath = path.join(__dirname, 'data/giankar.json');
+  else if (sistema === 'peru_bcgl') filePath = path.join(__dirname, 'data/peru_bcgl.json');
   else return res.status(400).json({ error: 'Sistema no válido' });
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -98,8 +98,8 @@ router.post('/data/:sistema/editar/:dni', function(req, res) {
   const dni = req.params.dni;
   const { campo, valor } = req.body;
   let filePath;
-  if (sistema === 'giankar') filePath = path.join(__dirname, '../data/giankar.json');
-  else if (sistema === 'peru_bcgl') filePath = path.join(__dirname, '../data/peru_bcgl.json');
+  if (sistema === 'giankar') filePath = path.join(__dirname, 'data/giankar.json');
+  else if (sistema === 'peru_bcgl') filePath = path.join(__dirname, 'data/peru_bcgl.json');
   else return res.status(400).json({ error: 'Sistema no válido' });
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -125,7 +125,7 @@ router.post('/data/:sistema/editar/:dni', function(req, res) {
 });
 
 // --- Descripciones persistentes ---
-const DESCS_FILE = path.join(__dirname, '../data/descripciones.json');
+const DESCS_FILE = path.join(__dirname, 'data/descripciones.json');
 
 // Obtener descripción por DNI
 router.get('/descripcion/:sistema/:dni', (req, res) => {
