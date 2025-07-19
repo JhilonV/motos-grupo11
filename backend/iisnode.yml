@@ -1,0 +1,5 @@
+nodeProcessCommandLine: "node"
+loggingEnabled: true
+logDirectory: "iisnode"
+devErrorsEnabled: true
+node_env: "production" 
