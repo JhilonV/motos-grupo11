@@ -8,7 +8,6 @@ function Buscar() {
   const [sistema] = useState(localStorage.getItem('sistema'));
   const [error, setError] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [descCargada, setDescCargada] = useState(false);
   const [busqueda, setBusqueda] = useState('');
   const [editando, setEditando] = useState({}); // {rowIdx: {campo: valor}}
   const [showAddField, setShowAddField] = useState(false);
@@ -16,10 +15,6 @@ function Buscar() {
   const [newFieldValue, setNewFieldValue] = useState('');
   const navigate = useNavigate();
   const API_URL = 'https://motos-grupo11-backend-erhnahesh7hrcdc4.canadacentral-01.azurewebsites.net';
-
-  useEffect(() => {
-    setDescCargada(false);
-  }, [busqueda, sistema]);
 
   // Función para cargar descripción
   const cargarDescripcion = async (dni) => {
@@ -43,7 +38,7 @@ function Buscar() {
     } else {
       setDescripcion('');
     }
-  }, [resultados, sistema, API_URL]);
+  }, [resultados, sistema, API_URL, cargarDescripcion]);
 
   const handleBuscar = async (e) => {
     e.preventDefault();
