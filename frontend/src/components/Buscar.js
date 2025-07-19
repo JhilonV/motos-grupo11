@@ -16,21 +16,21 @@ function Buscar() {
   const navigate = useNavigate();
   const API_URL = 'https://motos-grupo11-backend-erhnahesh7hrcdc4.canadacentral-01.azurewebsites.net';
 
-  // Función para cargar descripción
-  const cargarDescripcion = async (dni) => {
-    if (dni) {
-      try {
-        const res = await axios.get(`${API_URL}/descripcion/${sistema}/${dni}`);
-        setDescripcion(res.data.descripcion || '');
-      } catch (err) {
+  useEffect(() => {
+    // Función para cargar descripción (definida dentro del useEffect)
+    const cargarDescripcion = async (dni) => {
+      if (dni) {
+        try {
+          const res = await axios.get(`${API_URL}/descripcion/${sistema}/${dni}`);
+          setDescripcion(res.data.descripcion || '');
+        } catch (err) {
+          setDescripcion('');
+        }
+      } else {
         setDescripcion('');
       }
-    } else {
-      setDescripcion('');
-    }
-  };
+    };
 
-  useEffect(() => {
     if (resultados.length > 0) {
       // Cargar descripción del primer resultado
       const dni = resultados[0].DNI;
@@ -38,7 +38,7 @@ function Buscar() {
     } else {
       setDescripcion('');
     }
-  }, [resultados, sistema, API_URL, cargarDescripcion]);
+  }, [resultados, sistema, API_URL]);
 
   const handleBuscar = async (e) => {
     e.preventDefault();
